@@ -1,0 +1,220 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="text-center mb-2">📊 AI Spending Analytics</h2>
+
+{% if budget_alerts %}
+<div class="mb-2" style="max-width: 800px; margin: 0 auto 2rem auto;">
+    {% for alert in budget_alerts %}
+    <div class="flash-message error" style="margin-bottom: 0.5rem;">
+        <strong>Warning:</strong> You have exceeded your ₹{{ "%.2f"|format(alert.limit) }} budget for <strong>{{
+            alert.category }}</strong>! (Spent: ₹{{ "%.2f"|format(alert.spent) }})
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 2rem;">
+    <div class="card summary-card">
+        <h3>Total Balance</h3>
+        <div class="amount {% if balance >= 0 %}text-green{% else %}text-red{% endif %}">
+            ₹{{ "%.2f"|format(balance) }}
+        </div>
+    </div>
+    <div class="card summary-card">
+        <h3>Total Income</h3>
+        <div class="amount text-green">₹{{ "%.2f"|format(income) }}</div>
+    </div>
+    <div class="card summary-card">
+        <h3>Total Expenses</h3>
+        <div class="amount text-red">₹{{ "%.2f"|format(expenses) }}</div>
+    </div>
+</div>
+
+<div class="dashboard-grid" style="grid-template-columns: 1fr; max-width: 800px; margin: 0 auto;">
+
+    <!-- Chart Section -->
+    <div class="card">
+        <h3 class="mb-1 text-center">Expense Distribution</h3>
+        <div class="chart-container">
+            <canvas id="expenseChart"></canvas>
+        </div>
+        <div id="noDataMsg" class="text-center text-muted" style="display: none; padding: 2rem;">
+            Not enough expense data to display the chart.
+        </div>
+    </div>
+
+    <!-- Monthly Chart Section -->
+    <div class="card">
+        <h3 class="mb-1 text-center">Monthly Spending Trends</h3>
+        <div class="chart-container">
+            <canvas id="monthlyChart"></canvas>
+        </div>
+        <div id="noMonthlyDataMsg" class="text-center text-muted" style="display: none; padding: 2rem;">
+            Not enough monthly data to display the chart.
+        </div>
+    </div>
+
+    <!-- Monthly Summary Table Section -->
+    <div class="card">
+        <h3 class="mb-1 text-center">Monthly Summary</h3>
+        {% if monthly_data %}
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>Income</th>
+                        <th>Expense</th>
+                        <th>Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for m in monthly_data %}
+                    <tr>
+                        <td>{{ m.month }}</td>
+                        <td class="text-green">₹{{ "%.2f"|format(m.income) }}</td>
+                        <td class="text-red">₹{{ "%.2f"|format(m.expense) }}</td>
+                        <td class="{% if m.balance >= 0 %}text-green{% else %}text-red{% endif %}">
+                            ₹{{ "%.2f"|format(m.balance) }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-center text-muted" style="padding: 2rem;">No monthly data available.</p>
+        {% endif %}
+    </div>
+
+    <!-- AI Insights Section -->
+    <div class="card">
+        <h3 class="mb-1 text-center" style="color: var(--accent-blue);">
+            ✨ AI Insights
+        </h3>
+
+
+        <div id="aiLoader" class="loader"></div>
+
+        <div id="insightsContainer" class="insights-container" style="display: none;">
+            <div class="insight-card" style="border-left-color: var(--accent-blue);">
+                <h3>💡 Suggestions</h3>
+                <p id="aiSuggestions"></p>
+            </div>
+
+            <div class="insight-card" style="border-left-color: var(--accent-red);">
+                <h3>⚠️ Warnings</h3>
+                <p id="aiWarnings"></p>
+            </div>
+
+            <div class="insight-card" style="border-left-color: var(--accent-green);">
+                <h3>💰 Savings Tips</h3>
+                <p id="aiSavings"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // 1. Fetch Chart Data
+        fetch("{{ url_for('chart_data') }}")
+            .then(response => response.json())
+            .then(data => {
+                if (data.labels && data.labels.length > 0) {
+                    const ctx = document.getElementById('expenseChart').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'pie',
+                        data: {
+                            labels: data.labels,
+                            datasets: [{
+                                data: data.values,
+                                backgroundColor: [
+                                    '#ff6384', '#36a2eb', '#ffce56', '#4bc0c0',
+                                    '#9966ff', '#ff9f40', '#8bc34a', '#e91e63'
+                                ],
+                                borderWidth: 1,
+                                borderColor: '#1e1e1e'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'right',
+                                    labels: { color: '#e0e0e0' }
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    document.getElementById('expenseChart').style.display = 'none';
+                    document.getElementById('noDataMsg').style.display = 'block';
+                }
+            })
+            .catch(err => console.error("Error fetching chart data:", err));
+
+        // 1.5 Fetch Monthly Chart Data
+        fetch("{{ url_for('monthly_chart_data') }}")
+            .then(response => response.json())
+            .then(data => {
+                if (data.labels && data.labels.length > 0) {
+                    const ctx = document.getElementById('monthlyChart').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: data.labels,
+                            datasets: [{
+                                label: 'Monthly Expenses',
+                                data: data.values,
+                                backgroundColor: '#ff6384',
+                                borderColor: '#ff6384',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: { display: false }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    grid: { color: '#333' },
+                                    ticks: { color: '#e0e0e0' }
+                                },
+                                x: {
+                                    grid: { display: false },
+                                    ticks: { color: '#e0e0e0' }
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    document.getElementById('monthlyChart').style.display = 'none';
+                    document.getElementById('noMonthlyDataMsg').style.display = 'block';
+                }
+            })
+            .catch(err => console.error("Error fetching monthly chart data:", err));
+
+        // 2. Fetch AI Insights
+        fetch("{{ url_for('ai_insights') }}")
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('aiLoader').style.display = 'none';
+                document.getElementById('insightsContainer').style.display = 'flex';
+
+                document.getElementById('aiSuggestions').innerText = data.suggestions || "No suggestions available.";
+                document.getElementById('aiWarnings').innerText = data.warnings || "No warnings.";
+                document.getElementById('aiSavings').innerText = data.savings_tips || "No savings tips.";
+            })
+            .catch(err => {
+                console.error("Error fetching AI insights:", err);
+                document.getElementById('aiLoader').style.display = 'none';
+                document.getElementById('insightsContainer').style.display = 'flex';
+                document.getElementById('aiSuggestions').innerText = "Failed to load insights.";
+            });
+    });
+</script>
+{% endblock %}

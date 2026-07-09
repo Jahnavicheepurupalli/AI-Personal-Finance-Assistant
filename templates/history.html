@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2>Transaction History</h2>
+        <a href="{{ url_for('add_transaction') }}" class="btn btn-primary" style="padding: 0.5rem 1rem; width: auto;">+
+            New Transaction</a>
+    </div>
+
+    {% if transactions %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Category</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in transactions %}
+                <tr>
+                    <td>
+                        <span class="badge {% if t.type == 'Income' %}badge-income{% else %}badge-expense{% endif %}">
+                            {{ t.type }}
+                        </span>
+                    </td>
+                    <td>{{ t.category }}</td>
+                    <td class="{% if t.type == 'Income' %}text-green{% else %}text-red{% endif %}">
+                        ₹{{ "%.2f"|format(t.amount) }}
+                    </td>
+                    <td>{{ t.date }}</td>
+                    <td>
+                        <div style="display: flex; gap: 0.5rem; justify-content: flex-start;">
+                            <a href="{{ url_for('edit_transaction', id=t.id) }}" class="btn btn-primary"
+                                style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Edit</a>
+                            <form action="{{ url_for('delete_transaction', id=t.id) }}" method="POST"
+                                onsubmit="return confirm('Are you sure you want to delete this transaction?');"
+                                style="margin: 0;">
+                                <button type="submit" class="btn btn-danger"
+                                    style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="text-muted text-center" style="padding: 3rem 0;">You have no transactions yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

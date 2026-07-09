@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="auth-container" style="max-width: 500px; margin: 2rem auto;">
+    <div class="card">
+        <h2 class="text-center mb-2">Update Profile</h2>
+        <form action="{{ url_for('update_profile') }}" method="POST">
+            <div class="form-group mb-1">
+                <label for="name">Change Name</label>
+                <input type="text" id="name" name="name" class="form-control" placeholder="New Name" value="{{ session.get('user_name', '') }}">
+            </div>
+            <div class="form-group mb-2">
+                <label for="new_password">Change Password</label>
+                <input type="password" id="new_password" name="new_password" class="form-control" placeholder="New Password (min 8 chars, 1 special)">
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Save Changes</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

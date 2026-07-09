@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="mb-2">
+    <h2>Welcome, {{ session.get('user_name', 'User') }} 👋</h2>
+    <p class="text-muted">Here is your financial summary.</p>
+</div>
+
+{% if budget_alerts %}
+<div class="mb-2">
+    {% for alert in budget_alerts %}
+    <div class="flash-message error" style="margin-bottom: 0.5rem;">
+        <strong>Warning:</strong> You have exceeded your ₹{{ "%.2f"|format(alert.limit) }} budget for <strong>{{
+            alert.category }}</strong>! (Spent: ₹{{ "%.2f"|format(alert.spent) }})
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="card mb-2" style="padding: 1rem;">
+    <h3
+        style="margin-bottom: 1rem; font-size: 1.1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+        Set Monthly Budget
+    </h3>
+    <form action="{{ url_for('set_budget') }}" method="POST"
+        style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end;">
+        <div style="flex: 1; min-width: 200px;">
+            <label for="budget_category" style="font-size: 0.9rem;">Category</label>
+            <input type="text" id="budget_category" name="category" class="form-control" placeholder="e.g. Food, Rent"
+                required>
+        </div>
+        <div style="flex: 1; min-width: 200px;">
+            <label for="budget_amount" style="font-size: 0.9rem;">Budget Limit (₹)</label>
+            <input type="number" step="0.01" id="budget_amount" name="amount" class="form-control" placeholder="0.00"
+                required>
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary" style="padding: 0.75rem 1.5rem;">Save Budget</button>
+        </div>
+    </form>
+    {% if budgets %}
+    <div style="margin-top: 1rem; font-size: 0.9rem;">
+        <strong>Current Budgets:</strong>
+        {% for cat, amt in budgets.items() %}
+        <span class="badge badge-expense" style="margin-right: 0.5rem;">{{ cat }}: ₹{{ "%.2f"|format(amt) }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+
+
+
+<div class="dashboard-grid">
+    <div class="card summary-card">
+        <h3>Total Balance</h3>
+        <div class="amount {% if balance >= 0 %}text-green{% else %}text-red{% endif %}">
+            ₹{{ "%.2f"|format(balance) }}
+        </div>
+    </div>
+    <div class="card summary-card">
+        <h3>Total Income</h3>
+        <div class="amount text-green">₹{{ "%.2f"|format(income) }}</div>
+    </div>
+    <div class="card summary-card">
+        <h3>Total Expenses</h3>
+        <div class="amount text-red">₹{{ "%.2f"|format(expenses) }}</div>
+    </div>
+</div>
+
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h3>Recent Transactions</h3>
+        <a href="{{ url_for('history') }}" class="btn btn-primary" style="padding: 0.5rem 1rem; width: auto;">View
+            All</a>
+    </div>
+
+    {% if transactions %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Category</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in transactions %}
+                <tr>
+                    <td>
+                        <span class="badge {% if t.type == 'Income' %}badge-income{% else %}badge-expense{% endif %}">
+                            {{ t.type }}
+                        </span>
+                    </td>
+                    <td>{{ t.category }}</td>
+                    <td class="{% if t.type == 'Income' %}text-green{% else %}text-red{% endif %}">
+                        ₹{{ "%.2f"|format(t.amount) }}
+                    </td>
+                    <td>{{ t.date }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="text-muted text-center" style="padding: 2rem 0;">No transactions found. <a
+            href="{{ url_for('add_transaction') }}">Add one now</a>.</p>
+    {% endif %}
+</div>
+{% endblock %}
