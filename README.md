@@ -1,46 +1,52 @@
 # 💰 AI Personal Finance Assistant
 
-An AI-powered Personal Finance Assistant that helps users manage their income, expenses, budgets, and receive intelligent financial insights. The application provides an easy-to-use interface for tracking financial activities and making better financial decisions.
+An AI-powered Personal Finance Assistant that helps users efficiently manage their income, expenses, and monthly budgets. The application provides AI-driven financial insights, spending analysis, and personalized savings suggestions to help users make smarter financial decisions.
 
 ---
 
-## 🚀 Features
+# 🚀 Features
 
-- 👤 User-friendly interface
-- 💵 Income tracking
-- 💸 Expense management
-- 📊 Budget planning
-- 🤖 AI-powered financial suggestions
-- 📈 Expense analysis and reports
-- 🔒 Secure data management
-- ⚡ Fast and responsive web application
+- 👤 User Registration & Secure Login
+- 💵 Income Tracking
+- 💸 Expense Management
+- 📊 Monthly Budget Planning
+- 📈 Financial Analytics Dashboard
+- 🥧 Expense Distribution Charts
+- 🤖 AI-Powered Financial Insights
+- 💡 Smart Savings Suggestions
+- ⚠️ Expense Warnings & Recommendations
+- 📜 Transaction History
+- 👤 User Profile Management
+- 🔒 Secure Data Management
+- ⚡ Responsive & User-Friendly Interface
 
 ---
 
-## 🛠️ Tech Stack
+# 🛠️ Tech Stack
 
-### Frontend
+## Frontend
 - HTML5
 - CSS3
 - JavaScript
 
-### Backend
+## Backend
 - Python
 - Flask
 
-### Database
+## Database
 - SQLite
 
-### AI Integration
+## AI Integration
 - Groq API
 
 ---
 
-## 📂 Project Structure
+# 📂 Project Structure
 
 ```
 AI-Personal-Finance-Assistant/
 │
+├── screenshots/
 ├── static/
 ├── templates/
 ├── app.py
@@ -53,27 +59,53 @@ AI-Personal-Finance-Assistant/
 
 ---
 
-## ⚙️ Installation
+# 📸 Application Screenshots
 
-### Clone Repository
+### 🔐 Login Page
+
+![Login](screenshots/login%20page.png)
+
+---
+
+### 🏠 Dashboard
+
+![Dashboard](screenshots/dashboard%20page.png)
+
+---
+
+### 📊 Analytics Dashboard
+
+![Analytics](screenshots/analytics%20page.png)
+
+---
+
+### 🤖 AI Financial Insights
+
+![AI Insights](screenshots/ai%20insights.png)
+
+---
+
+# ⚙️ Installation
+
+### 1️⃣ Clone the Repository
 
 ```bash
 git clone https://github.com/Jahnavicheepurupalli/AI-Personal-Finance-Assistant.git
 ```
 
-### Move to Project Folder
+### 2️⃣ Navigate to the Project Folder
 
 ```bash
 cd AI-Personal-Finance-Assistant
 ```
 
-### Install Dependencies
+### 3️⃣ Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### Run the Application
+### 4️⃣ Run the Application
 
 ```bash
 python app.py
@@ -81,24 +113,41 @@ python app.py
 
 ---
 
-## 🎯 Future Enhancements
+# 🎯 Future Enhancements
 
-- AI-powered expense prediction
-- Voice assistant support
-- Expense categorization using AI
-- Financial goal tracking
-- Data visualization dashboard
-- Mobile responsive design
+- 🤖 AI Expense Prediction
+- 🎤 Voice Assistant Support
+- 📧 Monthly Expense Reports via Email
+- 📄 PDF Report Generation
+- 🌙 Dark & Light Theme Support
+- 📱 Fully Responsive Mobile Version
+- 💳 Bank Account Integration
+- ☁️ Cloud Database Support
+- 📈 Advanced Financial Forecasting
 
 ---
 
-## 👩‍💻 Author
+# 👩‍💻 Author
 
 **Cheepurupalli Jahnavi**
 
-- 🎓 Final Year B.Tech Student
-- 💻 Interested in AI & Full Stack Development
+🎓 Final Year B.Tech Student (Computer Science)
+
+💻 Passionate about AI, Full Stack Development, and Software Engineering.
+
+📫 GitHub:
+https://github.com/Jahnavicheepurupalli
 
 ---
 
-## ⭐ If you like this project, don't forget to give it a Star!
+# ⭐ Support
+
+If you found this project helpful, please consider giving it a ⭐ on GitHub.
+
+Your support motivates me to build more useful AI-powered applications.
+
+---
+
+## 📜 License
+
+This project is developed for educational and learning purposes.
